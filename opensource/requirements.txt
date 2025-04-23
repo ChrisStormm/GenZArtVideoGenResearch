@@ -1,0 +1,7 @@
+torch
+diffusers[torch]
+transformers
+accelerate
+imageio
+gradio
+
