@@ -136,19 +136,30 @@ def main():
     start_time = time.time()
     
     try:
+        print(f"Sending request with payload:")
+        print(json.dumps(payload, indent=2))
+        
         response = requests.post(url, headers=headers, json=payload)
         
         if response.status_code != 200:
-            print(f"Error: API request failed with status code {response.status_code}")
-            print(f"Response: {response.text}")
+            print(f"\n==== API REQUEST FAILED ====")
+            print(f"Status code: {response.status_code}")
+            print(f"Response text: {response.text}")
+            try:
+                error_json = response.json()
+                print(f"Response JSON: {json.dumps(error_json, indent=2)}")
+            except:
+                print("Response is not valid JSON")
             return
         
         # Process the response
         response_data = response.json()
         
         if response_data.get("code") != 200:
-            print(f"Error: API request failed with code {response_data.get('code')}")
+            print(f"\n==== API RESPONSE ERROR ====")
+            print(f"Error code: {response_data.get('code')}")
             print(f"Message: {response_data.get('message')}")
+            print(f"Full response: {json.dumps(response_data, indent=2)}")
             return
             
         # Get task ID for tracking
@@ -169,25 +180,57 @@ def main():
             status_response = requests.get(status_url, headers=headers)
             
             if status_response.status_code != 200:
-                print(f"Error getting task status: {status_response.status_code}")
+                print(f"\n==== STATUS CHECK FAILED ====")
+                print(f"Status code: {status_response.status_code}")
                 print(f"Response: {status_response.text}")
+                try:
+                    error_json = status_response.json()
+                    print(f"Response JSON: {json.dumps(error_json, indent=2)}")
+                except:
+                    print("Response is not valid JSON")
                 continue
                 
             status_data = status_response.json()
             
             if status_data.get("code") != 200:
-                print(f"Error: Status check failed with code {status_data.get('code')}")
+                print(f"\n==== STATUS CHECK ERROR ====")
+                print(f"Error code: {status_data.get('code')}")
                 print(f"Message: {status_data.get('message')}")
+                print(f"Full response: {json.dumps(status_data, indent=2)}")
                 continue
                 
-            task_status = status_data.get("data", {}).get("status")
+            # Process the status response to check completion
+            task_status = status_data.get("data", {}).get("status", "").lower()
             
-            if task_status == "Completed":
+            if task_status == "completed" or task_status == "Completed":
                 print("Generation completed!")
                 break
-            elif task_status == "Failed":
-                error_message = status_data.get("data", {}).get("error", {}).get("message")
-                print(f"Generation failed: {error_message}")
+            elif task_status == "failed":
+                print("\n==== TASK FAILED ====")
+                
+                # Extract error details
+                error_obj = status_data.get("data", {}).get("error", {})
+                error_message = error_obj.get("message", "No error message")
+                error_code = error_obj.get("code", "No error code")
+                error_raw = error_obj.get("raw_message", "No raw error message")
+                error_detail = error_obj.get("detail", "No error details")
+                
+                print(f"Error code: {error_code}")
+                print(f"Error message: {error_message}")
+                print(f"Raw error: {error_raw}")
+                print(f"Error details: {error_detail}")
+                
+                # Print any logs that might provide more context
+                logs = status_data.get("data", {}).get("logs", [])
+                if logs:
+                    print("\nTask logs:")
+                    for i, log in enumerate(logs):
+                        print(f"  Log {i+1}: {json.dumps(log, indent=2)}")
+                
+                # Print the full response for debugging
+                print("\nFull response data:")
+                print(json.dumps(status_data.get("data", {}), indent=2))
+                
                 return
             else:
                 # Extract progress if available

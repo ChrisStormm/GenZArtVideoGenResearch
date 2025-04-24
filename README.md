@@ -23,7 +23,9 @@ pip install -r requirements.txt
 
 Input image urls:
 
--https://imgur.com/a/sJjHwyy
+-https://i.imgur.com/mbvOZ38.jpeg (Studying Ghibli style)
+-https://i.imgur.com/a4wxAeV.jpeg (cats on table)
 
 
-
+Trigger kling api command:
+python3 scripts/closed_source/piapi_kling.py --image_url "https://i.imgur.com/mbvOZ38.jpeg" --prompt "A focused man is studying and listening to music." --model 1.0 --mode std --duration 5
