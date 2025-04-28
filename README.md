@@ -29,3 +29,6 @@ Input image urls:
 
 Trigger kling api command:
 python3 scripts/closed_source/piapi_kling.py --image_url "https://i.imgur.com/mbvOZ38.jpeg" --prompt "A focused man is studying and listening to music." --model 1.0 --mode std --duration 5
+
+Trigger hailuo api command:
+python3 scripts/closed_source/minMax_hailuo.py --image inputs/cats_on_table.jpg --prompt "A humorous scene featuring two cats at a dining table. tl , a gray and white tabby cat appears, looking cheerful and convey a sense of mischief." --model I2V-01-Director

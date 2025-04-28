@@ -25,7 +25,7 @@ def parse_args():
     parser.add_argument("--prompt", type=str, required=True, help="Text prompt to guide the video generation")
     parser.add_argument("--output_dir", type=str, default="outputs", help="Directory to save the output video")
     parser.add_argument("--api_key", type=str, help="PiAPI API key (or set PIAPI_KEY env var)")
-    parser.add_argument("--model", type=str, choices=["1.0", "1.5", "1.6", "2.0"], default="2.0", 
+    parser.add_argument("--model", type=str, choices=["1.0", "1.5", "1.6", "2.0", "2.1"], default="2.0", 
                         help="Kling model version (1.0, 1.5, 1.6, or 2.0)")
     parser.add_argument("--mode", type=str, choices=["std", "pro"], default="std",
                         help="Generation mode: std or pro")
